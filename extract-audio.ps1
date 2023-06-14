@@ -1,14 +1,19 @@
-$fileName = "last-recorded-stream.mkv"
-$dir = "D:\past streams"
+# Full file name
+$fileName = "latest-stream-recording.mkv"
 
-$out = ($fileName).SubString(0,10)
+# wav or mp3
+$format = "mp3"
 
-Set-Location $dir
+# -----------------------------------------------------------
+$dir = $PSScriptRoot # Current directory
+Set-Location -LiteralPath $dir
 
-#Comment/uncomment the lines you need for the preferred codec.
+$file = Get-Item -LiteralPath $fileName
 
-#To Wav (Highest quality, highest disk space)
-ffmpeg -i $fileName -vn "$out.wav" 
+$in = $file.Name
+$out = $file.BaseName
 
-#to 128kbit mp3 (most accessible format)
-#ffmpeg -i $fileName -b:a 128K -vn "$out.mp3" 
+switch ($format) {
+    "wav" { ffmpeg -i $in -vn "$out.wav"  }
+    "mp3" { ffmpeg -i $in -b:a 320K -vn "$out.mp3" }
+}
